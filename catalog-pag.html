@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ru">
+<head>
+		<meta charset="utf-8">
+		<title>Pokedex</title>
+		<meta name="description" content="Pokemon's abilities comparison" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<link href='https://fonts.googleapis.com/css?family=Ubuntu:400,700&subset=latin,cyrillic-ext' rel='stylesheet' type='text/css'>
+		<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+		<link href="css/main.css" rel="stylesheet" type="text/css">
+</head>
+<body data-page="catalogPag">
+		<div class="container">
+				<ul class="nav nav-pills">
+						<li class="active"><a href="catalog-pag.html">Выбери покемона</a></li>
+						<li id="compare-tab"><a href="compare.html">Сравни покемонов<span class="badge"></span></a></li>
+				</ul>
+				<br />
+				<div class="row">
+					<div class="btn-group col-md-6">
+						<button type="button" data-theme="big" class="btn btn-default js-theme" title="Большие фото"><span class="glyphicon glyphicon-th-large"></span></button>
+						<button type="button" data-theme="compact" class="btn btn-default js-theme" title="Компактный вид"><span class="glyphicon glyphicon-th"></span></button>
+						<button type="button" data-theme="list" class="btn btn-default js-theme" title="Списком"><span class="glyphicon glyphicon-list"></span></button>
+					</div>
+				</div>
+				<br />
+				<div class="row">
+						<div class="col-md-2">
+								Покемонов на странице:
+								<select id="pages-limit" class="form-control col-md-3">
+										<option value="2">2</option>
+										<option value="3">3</option>
+										<option value="5">5</option>
+										<option value="10">10</option>
+										<option value="100">100</option>
+								</select>
+						</div>
+				</div>
+				<div class="row">
+						<div class="col-md-12 mr-auto">
+								<ul id="pagination" class="pagination"></ul>
+						</div>
+				</div>
+				<div class="row">
+						<div class="col-md-12">
+								Показаны товары: <span id="goods-info"></span>
+						</div>
+				</div>
+				<ul id="goods" class="list-unstyled">
+						<img src="img/loading.gif" alt="" />
+				</ul>
+		</div>
+
+		<script id="goods-template-compact" type="text/template">
+				<% _.each(goods, function(item) { %>
+				<li class="small-good-item row">
+						<div class="col-md-2">
+								<img class="small-good-item__img" src="img/goods/<%= item.photo %>" />
+						</div>
+						<div class="col-md-10">
+								<div class="small-good-item__id">#0<%= item.good_id %></div>
+								<div class="small-good-item__name"><%- item.name %></div>
+								<div class="small-good-item__weight">Weight: <%= item.weight %></div>
+								<div class="small-good-item__height">Height: <%= item.height %></div>
+								<div class="small-good-item__type">Type: <%- item.type %></div>
+								<button
+									class="small-good-item__btn-add btn btn-info btn-sm js-add-to-compare"
+									data-id="<%= item.good_id %>"
+									data-category-id="<%= item.category_id %>"
+									>Добавить к сравнению</button>
+						</div>
+				</li>
+				<% }); %>
+		</script>
+
+		<script id="goods-template-big" type="text/template">
+				<% _.each(goods, function(item) { %>
+				<li class="good-item row">
+						<div class="col-md-4">
+								<img class="good-item__img" src="img/goods/<%= item.photo %>" />
+						</div>
+						<div class="col-md-8">
+								<div class="good-item__id">#0<%= item.good_id %></div>
+								<div class="good-item__name"><%- item.name %></div>
+								<div class="good-item__weight">Weight: <%= item.weight %></div>
+								<div class="good-item__height">Height: <%= item.height %></div>
+								<div class="good-item__type">Type: <%- item.type %></div>
+								<button
+									class="small-good-item__btn-add btn btn-info btn-sm js-add-to-compare"
+									data-id="<%= item.good_id %>"
+									data-category-id="<%= item.category_id %>"
+									>Добавить к сравнению</button>
+						</div>
+				</li>
+				<% }); %>
+		</script>
+
+		<script id="goods-template-list" type="text/template">
+				<br />
+				<br />
+				<% _.each(goods, function(item) { %>
+				<li class="row">
+						<div class="col-md-12">
+								<p class="good-list">
+									<span class=goods-template-id>#0<%= item.good_id %></span>,<span class="goods-template-name"> <%- item.name %>.</span> Height: <%= item.height %>, Weight: <%= item.weight %> 
+									<a
+										class="btn btn-link btn-sm js-add-to-compare"
+										data-id="<%= item.good_id %>"
+										data-category-id="<%= item.category_id %>"
+										>Добавить к сравнению</a>
+								</p>
+						</div>
+				</li>
+				<% }); %>
+		</script>
+
+		<script id="pagination-template" type="text/template">
+				<% if (page !== 1) { %>
+				<li data-page="1"><a href>&laquo;</a></li>
+				<li data-page="<%= page-1 %>"><a href>&lt;</a></li>
+				<% } %>
+
+				<% for (var i = 1; i <= countPages; i++) { %>
+				<li data-page="<%= i %>" <%= (i === page) ? ' class="active"' : '' %>><a href><%= i %></a></li>
+				<% } %>
+
+				<% if (page !== countPages) { %>
+				<li data-page="<%= page + 1 %>"><a href>&gt;</a></li>
+				<li data-page="<%= countPages %>"><a href>&raquo;</a></li>
+				<% } %>
+		</script>
+
+		<script src="js/vendor/jquery-3.3.1.min.js"></script>
+		<script src="js/vendor/jquery.cookie.js" type="text/javascript"></script>
+		<script src="js/vendor/underscore.min.js" type="text/javascript"></script>
+		<script src="js/modules/catalogPag.js" type="text/javascript"></script>
+		<script src="js/modules/compare.js" type="text/javascript"></script>
+		<script src="js/modules/main.js" type="text/javascript"></script>
+</body>
+</html>
